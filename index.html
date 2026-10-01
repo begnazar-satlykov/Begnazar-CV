@@ -313,31 +313,7 @@ COMPANY OF TURKEY, TURKMENBASHI, TURKMENISTAN</div><div class="date">November 20
   <div class="sec-sub">Professional credentials & training</div>
   <div class="cert-grid" id="certGrid"></div>
 </section>
-<div class="divider"></div>
 
-<!-- AI CHATBOT -->
-<div class="chatbot-section" id="chat">
-  <div class="chat-container">
-    <div class="sec-title" style="margin-bottom:.4rem">Ask <span>AI</span> About Me</div>
-    
-    <div class="chat-header">
-      <div class="chat-avatar">BS</div>
-      <div class="chat-header-text">
-        <h3>Begnazar's AI Assistant</h3>
-        <p><span class="online-dot"></span>Online · Ready to answer</p>
-      </div>
-    </div>
-    <div class="quick-questions" id="quickQ"></div>
-    <div class="chat-messages" id="chatMsgs">
-      <div class="msg"><div class="msg-icon">BS</div><div class="msg-bubble">Hi! I'm Begnazar's AI assistant. I know all about him experience, skills, projects and certifications. What would you like to know?</div></div>
-    </div>
-    <div class="chat-input-row">
-      <input id="chatInput" type="text" placeholder="Ask about skills, experience, projects..." onkeydown="if(event.key==='Enter')sendChat()"/>
-      <button class="chat-send" onclick="sendChat()">Send</button>
-    </div>
-  </div>
-</div>
-<div class="divider"></div>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -501,66 +477,6 @@ certs.forEach(c=>{
   cg.appendChild(d);
 });
 
-/* ── QUICK CHAT QUESTIONS ── */
-const quickQs=['What are Begnazar\'s main skills?','What django projects has he built?','Is he available to hire?','What languages does he speak?','Tell me about him experience'];
-const qc=document.getElementById('quickQ');
-quickQs.forEach(q=>{const b=document.createElement('button');b.className='quick-btn';b.textContent=q;b.onclick=()=>askQuick(q);qc.appendChild(b);});
-
-/* ── CHATBOT ── */
-const CV_CONTEXT=`Begnazar Satlykov – Software Engineer. Bucharest, Romania. Email: begnazarsatlykov@gmail.com. Phone: +40749560351.
-SUMMARY: 3+ years expertise in software engineering, django, backend, full stack, flutter, data engineering, mySQL ,computer vision. Python, C++, Flask, Django, FastAPI, Dash, Flutter,  Docker. Expanding in ML and Generative AI.
-EXPERIENCE:Software Engineer | Research Engineer  – Security Operations Center (SOC), SOFTWARE ENGINEER INTERN – QUANTIUM, DATA SOLUTIONS DEVELOPER, MATHEMATICS TEACHER SECONDARY SCHOOL – EDUCATION DEPARTMENT, ASSISTANT TO QUALITY CONTROL SPECIALIST – ILKINSAAT TAAHUT SANAYI VE TIJARETI ANONIM SIRKETI
-COMPANY OF TURKEY
-EDUCATION: MATHEMATICS, COMPUTER SCIENCE Brest State University named after A.S.Pushkin
-SKILLS: Python, TensorFlow, PyTorch, Scikit-learn, SQL, Tableau, Power BI, Flask, Docker, AWS,Computer Vision, Pandas, NumPy, GitHub, Jupyter, YOLO, Django, Flutter, FastAPI, C++.
-LANGUAGES: English (Professional), Turkish (Professional), Russian (Professional), Romanian (intermediate), Turkmen (Native).
-PROJECTS: Elliptic Curves in Security, AI Voice Assistant, Haversine distance, Scientific Computing with Python, Disk-Method-with-Django
-CERTIFICATIONS: Statistics Fundamentals, Flutter and Dart: Developing iOS, Android, and Mobile Apps, Using Python to Access Web Data, Scientific Computing with Python, Web Application Technologies and Django, Software Engineering Job Simulation, Python programming, Using Databases with Python, Data Analysis with Python, Building Web Applications in Django, Python for Data Science, AI & Development, Capstone: Retrieving, Processing, and Visualizing Data with Python, Python Data Structures, Python From Scratch & Selenium WebDriver & QA Automation
-AVAILABILITY: I'm open to Software Engineer, Django developer, Research Engineer, Data Engineer, Python developer, PhD student, Full stack developer, AI/ML engineering and analytics roles — remote, hybrid or on-site.`;
-
-const msgs=document.getElementById('chatMsgs');
-let chatHistory=[];
-
-function escHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function appendMsg(text,isUser){
-  const d=document.createElement('div');
-  d.className='msg'+(isUser?' user':'');
-  d.innerHTML=isUser
-    ?`<div class="msg-icon" style="background:linear-gradient(135deg,#555,#333)">You</div><div class="msg-bubble">${escHtml(text)}</div>`
-    :`<div class="msg-icon">BS</div><div class="msg-bubble">${text.replace(/\n/g,'<br/>')}</div>`;
-  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
-}
-function showTyping(){
-  const d=document.createElement('div');d.className='msg';d.id='typing';
-  d.innerHTML=`<div class="msg-icon">BS</div><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
-  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
-}
-async function sendChat(){
-  const inp=document.getElementById('chatInput');
-  const q=inp.value.trim();if(!q)return;
-  inp.value='';appendMsg(q,true);
-  chatHistory.push({role:'user',content:q});
-  showTyping();
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:1000,
-        system:`You are an AI assistant for Begnazar Satlykov's portfolio. Answer questions about him using ONLY the CV info provided. Be friendly, professional and concise. If something isn't in the CV, suggest contacting Begnazar directly.\n\nCV:\n${CV_CONTEXT}`,
-        messages:chatHistory
-      })
-    });
-    const data=await res.json();
-    document.getElementById('typing')?.remove();
-    const reply=data.content?.[0]?.text||"I'm having trouble right now. Please try again!";
-    chatHistory.push({role:'assistant',content:reply});
-    appendMsg(reply,false);
-  }catch(e){
-    document.getElementById('typing')?.remove();
-    appendMsg("Connection issue. Please try again shortly.",false);
-  }
-}
-function askQuick(q){document.getElementById('chatInput').value=q;sendChat();}
 
 /* ── EMAIL FORM ── */
 function sendEmail(){
